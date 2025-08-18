@@ -276,6 +276,14 @@
             background-color: #f9fafb;
         }
 
+        .chamado-row {
+            cursor: pointer;
+        }
+
+        .chamado-row:hover {
+            background-color: #f3f4f6 !important;
+        }
+
         .badge {
             padding: 0.25rem 0.75rem;
             border-radius: 9999px;
@@ -513,7 +521,7 @@
                     <label>Canal</label>
                     <select id="canal" required>
                         <option value="">Selecione</option>
-                        <option value="Ferramenta">Ferramenta de Chamados</option>
+                        <option value="Ferramenta-de-Chamados">Ferramenta de Chamados</option>
                         <option value="Pessoalmente">Pessoalmente</option>
                     </select>
                 </div>
@@ -560,6 +568,78 @@
             <div class="modal-actions">
                 <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
                 <button class="btn btn-primary" onclick="saveChamado()">Salvar Chamado</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detalhes do Chamado -->
+    <div class="modal" id="modal-detalhes">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="detalhes-titulo">Detalhes do Chamado</h2>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Número do Chamado</label>
+                    <input type="text" id="det-numero" readonly style="background-color: #f9fafb;">
+                </div>
+                <div class="form-group">
+                    <label>Equipamento</label>
+                    <input type="text" id="det-equipamento" readonly style="background-color: #f9fafb;">
+                </div>
+                <div class="form-group">
+                    <label>Empresa</label>
+                    <input type="text" id="det-empresa" readonly style="background-color: #f9fafb;">
+                </div>
+                <div class="form-group">
+                    <label>Requisitante</label>
+                    <input type="text" id="det-requisitante" readonly style="background-color: #f9fafb;">
+                </div>
+                <div class="form-group">
+                    <label>Canal</label>
+                    <input type="text" id="det-canal" readonly style="background-color: #f9fafb;">
+                </div>
+                <div class="form-group">
+                    <label>Setor</label>
+                    <input type="text" id="det-setor" readonly style="background-color: #f9fafb;">
+                </div>
+                <div class="form-group">
+                    <label>Prioridade</label>
+                    <span class="badge" id="det-prioridade-badge"></span>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <span class="badge" id="det-status-badge"></span>
+                </div>
+                <div class="form-group">
+                    <label>Situação</label>
+                    <span class="badge" id="det-situacao-badge"></span>
+                </div>
+                <div class="form-group">
+                    <label>Data Início</label>
+                    <input type="text" id="det-data-inicio" readonly style="background-color: #f9fafb;">
+                </div>
+                <div class="form-group">
+                    <label>Data Término</label>
+                    <input type="text" id="det-data-termino" readonly style="background-color: #f9fafb;">
+                </div>
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label>Solução Aplicada</label>
+                    <div id="det-solucao" style="
+                        padding: 0.75rem;
+                        border: 1px solid #d1d5db;
+                        border-radius: 0.5rem;
+                        background-color: #f9fafb;
+                        min-height: 80px;
+                        white-space: pre-wrap;
+                        color: #374151;
+                    "></div>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeDetalhesModal()">Fechar</button>
             </div>
         </div>
     </div>
@@ -766,7 +846,7 @@
             }
 
             tbody.innerHTML = dataToShow.map(chamado => `
-                <tr>
+                <tr class="chamado-row" onclick="showChamadoDetails(${chamado.id})">
                     <td>#${chamado.numero}</td>
                     <td>${chamado.equipamento}</td>
                     <td>${chamado.empresa}</td>
@@ -809,6 +889,63 @@
                 closeModal();
             }
         });
+
+        // Fechar modal detalhes ao clicar fora
+        document.getElementById('modal-detalhes').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDetalhesModal();
+            }
+        });
+
+        // Mostrar detalhes do chamado
+        function showChamadoDetails(chamadoId) {
+            const chamado = chamados.find(c => c.id === chamadoId);
+            if (!chamado) return;
+
+            // Preencher campos
+            document.getElementById('detalhes-titulo').textContent = `Chamado #${chamado.numero}`;
+            document.getElementById('det-numero').value = `#${chamado.numero}`;
+            document.getElementById('det-equipamento').value = chamado.equipamento || '-';
+            document.getElementById('det-empresa').value = chamado.empresa || '-';
+            document.getElementById('det-requisitante').value = chamado.requisitante || '-';
+            document.getElementById('det-canal').value = chamado.canal || '-';
+            document.getElementById('det-setor').value = chamado.setor || '-';
+            document.getElementById('det-data-inicio').value = chamado.dataInicio ? formatDate(chamado.dataInicio) : '-';
+            document.getElementById('det-data-termino').value = chamado.dataTermino ? formatDate(chamado.dataTermino) : (chamado.status === 'Concluído' ? 'Não informada' : 'Em andamento');
+            document.getElementById('det-solucao').textContent = chamado.solucao || 'Nenhuma solução cadastrada ainda.';
+
+            // Badges
+            const statusBadge = document.getElementById('det-status-badge');
+            statusBadge.textContent = chamado.status;
+            statusBadge.className = `badge ${chamado.status === 'Concluído' ? 'green' : 'yellow'}`;
+
+            const prioridadeBadge = document.getElementById('det-prioridade-badge');
+            prioridadeBadge.textContent = chamado.prioridade;
+            prioridadeBadge.className = `badge ${chamado.prioridade === 'Alta' ? 'red' : chamado.prioridade === 'Média' ? 'yellow' : 'green'}`;
+
+            const situacaoBadge = document.getElementById('det-situacao-badge');
+            situacaoBadge.textContent = chamado.situacao;
+            situacaoBadge.className = `badge ${chamado.situacao === 'Em Atraso' ? 'red' : 'green'}`;
+
+            // Mostrar modal
+            document.getElementById('modal-detalhes').classList.add('show');
+        }
+
+        // Fechar modal de detalhes
+        function closeDetalhesModal() {
+            document.getElementById('modal-detalhes').classList.remove('show');
+        }
+
+        // Formatar data para exibição
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString + 'T00:00:00');
+            return date.toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
 
         // Inicializar dashboard
         updateDashboard();
