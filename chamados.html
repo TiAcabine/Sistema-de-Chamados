@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Chamados TI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f9fafb;
+            color: #374151;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1.5rem 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header h1 {
+            color: #1f2937;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .header p {
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background-color: #d1d5db;
+        }
+
+        .nav-tabs {
+            background: white;
+            margin: 1.5rem 0;
+            padding: 0.25rem;
+            border-radius: 0.5rem;
+            display: flex;
+            gap: 0.25rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-tab {
+            padding: 0.75rem 1rem;
+            border: none;
+            background: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-weight: 500;
+            color: #6b7280;
+            transition: all 0.2s;
+        }
+
+        .nav-tab.active {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .nav-tab:hover:not(.active) {
+            color: #374151;
+        }
+
+        .card {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            color: white;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .stat-card.blue { background-color: #3b82f6; }
+        .stat-card.green { background-color: #10b981; }
+        .stat-card.yellow { background-color: #f59e0b; }
+        .stat-card.red { background-color: #ef4444; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .dashboard-card h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dashboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .dashboard-item:last-child {
+            border-bottom: none;
+        }
+
+        .dashboard-item .name {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .dashboard-item .count {
+            background-color: #f3f4f6;
+            color: #374151;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th {
+            background-color: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge.green {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge.yellow {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge.red {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            margin-top: 2rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #6b7280;
+            padding: 2rem;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div>
+                    <h1>Sistema de Chamados TI</h1>
+                    <p>Gerenciamento completo de chamados técnicos</p>
+                </div>
+                <button class="btn btn-primary" onclick="openModal()">
+                    ➕ Novo Chamado
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <div class="container">
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('dashboard')">
+                📊 Dashboard
+            </button>
+            <button class="nav-tab" onclick="showTab('chamados')">
+                🔍 Chamados (<span id="total-chamados">0</span>)
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Dashboard Tab -->
+        <div id="dashboard-tab">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card blue">
+                    <h3>Total de Chamados</h3>
+                    <div class="number" id="stat-total">0</div>
+                </div>
+                <div class="stat-card green">
+                    <h3>Concluídos</h3>
+                    <div class="number" id="stat-concluidos">0</div>
+                </div>
+                <div class="stat-card yellow">
+                    <h3>Abertos</h3>
+                    <div class="number" id="stat-abertos">0</div>
+                </div>
+                <div class="stat-card red">
+                    <h3>Em Atraso</h3>
+                    <div class="number" id="stat-atraso">0</div>
+                </div>
+            </div>
+
+            <!-- Dashboard Cards -->
+            <div class="dashboard-grid">
+                <div class="card dashboard-card">
+                    <h3>🔧 Equipamentos com mais chamados</h3>
+                    <div id="top-equipamentos"></div>
+                </div>
+                <div class="card dashboard-card">
+                    <h3>📅 Dias com mais chamados</h3>
+                    <div id="top-dias"></div>
+                </div>
+                <div class="card dashboard-card">
+                    <h3>🏢 Setores com mais chamados</h3>
+                    <div id="top-setores"></div>
+                </div>
+                <div class="card dashboard-card">
+                    <h3>🏭 Empresas com mais chamados</h3>
+                    <div id="top-empresas"></div>
+                </div>
+                <div class="card dashboard-card">
+                    <h3>👥 Requisitantes com mais chamados</h3>
+                    <div id="top-requisitantes"></div>
+                </div>
+                <div class="card dashboard-card">
+                    <h3>📞 Canais com mais chamados</h3>
+                    <div id="top-canais"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chamados Tab -->
+        <div id="chamados-tab" style="display: none;">
+            <!-- Search -->
+            <div class="card">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="search-input" placeholder="Buscar chamados..." oninput="filterChamados()">
+                </div>
+            </div>
+
+            <!-- Chamados Table -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Número</th>
+                            <th>Equipamento</th>
+                            <th>Empresa</th>
+                            <th>Requisitante</th>
+                            <th>Status</th>
+                            <th>Prioridade</th>
+                            <th>Data Início</th>
+                        </tr>
+                    </thead>
+                    <tbody id="chamados-tbody">
+                        <tr>
+                            <td colspan="7" class="empty-state">Nenhum chamado cadastrado</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Form -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Novo Chamado</h2>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Número do Chamado</label>
+                    <input type="number" id="numero" min="1000" max="9999" required>
+                </div>
+                <div class="form-group">
+                    <label>Equipamento</label>
+                    <input type="text" id="equipamento" required>
+                </div>
+                <div class="form-group">
+                    <label>Empresa</label>
+                    <input type="text" id="empresa" required>
+                </div>
+                <div class="form-group">
+                    <label>Requisitante</label>
+                    <input type="text" id="requisitante" required>
+                </div>
+                <div class="form-group">
+                    <label>Canal</label>
+                    <select id="canal" required>
+                        <option value="">Selecione</option>
+                        <option value="Ferramenta">Ferramenta de Chamados</option>
+                        <option value="Pessoalmente">Pessoalmente</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Setor</label>
+                    <input type="text" id="setor" required>
+                </div>
+                <div class="form-group">
+                    <label>Prioridade</label>
+                    <select id="prioridade">
+                        <option value="Baixa">Baixa</option>
+                        <option value="Média" selected>Média</option>
+                        <option value="Alta">Alta</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="status">
+                        <option value="Aberto" selected>Aberto</option>
+                        <option value="Concluído">Concluído</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Situação</label>
+                    <select id="situacao">
+                        <option value="Em Dia" selected>Em Dia</option>
+                        <option value="Em Atraso">Em Atraso</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Data Início</label>
+                    <input type="date" id="dataInicio">
+                </div>
+                <div class="form-group">
+                    <label>Data Término</label>
+                    <input type="date" id="dataTermino">
+                </div>
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label>Solução</label>
+                    <textarea id="solucao" rows="3" placeholder="Descreva a solução aplicada..."></textarea>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveChamado()">Salvar Chamado</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados dos chamados
+        let chamados = [];
+        let filteredChamados = [];
+
+        // Inicializar data atual no campo
+        function initializeForm() {
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('dataInicio').value = hoje;
+            
+            // Gerar número automático
+            const numero = Math.floor(Math.random() * 9000) + 1000;
+            document.getElementById('numero').value = numero;
+        }
+
+        // Abrir modal
+        function openModal() {
+            document.getElementById('modal').classList.add('show');
+            initializeForm();
+        }
+
+        // Fechar modal
+        function closeModal() {
+            document.getElementById('modal').classList.remove('show');
+            clearForm();
+        }
+
+        // Limpar formulário
+        function clearForm() {
+            const form = document.getElementById('modal').querySelector('.form-grid');
+            const inputs = form.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (input.type === 'select-one') {
+                    input.selectedIndex = 0;
+                } else if (input.id === 'prioridade') {
+                    input.value = 'Média';
+                } else if (input.id === 'status') {
+                    input.value = 'Aberto';
+                } else if (input.id === 'situacao') {
+                    input.value = 'Em Dia';
+                } else {
+                    input.value = '';
+                }
+            });
+        }
+
+        // Salvar chamado
+        function saveChamado() {
+            const formData = {
+                id: Date.now(),
+                numero: document.getElementById('numero').value,
+                equipamento: document.getElementById('equipamento').value,
+                empresa: document.getElementById('empresa').value,
+                requisitante: document.getElementById('requisitante').value,
+                canal: document.getElementById('canal').value,
+                setor: document.getElementById('setor').value,
+                prioridade: document.getElementById('prioridade').value,
+                status: document.getElementById('status').value,
+                situacao: document.getElementById('situacao').value,
+                dataInicio: document.getElementById('dataInicio').value,
+                dataTermino: document.getElementById('dataTermino').value,
+                solucao: document.getElementById('solucao').value
+            };
+
+            // Validação básica
+            const requiredFields = ['numero', 'equipamento', 'empresa', 'requisitante', 'canal', 'setor'];
+            for (let field of requiredFields) {
+                if (!formData[field]) {
+                    alert(`Por favor, preencha o campo ${field}`);
+                    return;
+                }
+            }
+
+            chamados.push(formData);
+            updateDashboard();
+            updateChamadosTable();
+            closeModal();
+            
+            // Mostrar mensagem de sucesso
+            alert('Chamado cadastrado com sucesso!');
+        }
+
+        // Alternar abas
+        function showTab(tabName) {
+            // Remover classe active de todas as abas
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Adicionar classe active à aba clicada
+            event.target.classList.add('active');
+            
+            // Esconder todas as abas
+            document.getElementById('dashboard-tab').style.display = 'none';
+            document.getElementById('chamados-tab').style.display = 'none';
+            
+            // Mostrar aba selecionada
+            document.getElementById(tabName + '-tab').style.display = 'block';
+            
+            if (tabName === 'chamados') {
+                updateChamadosTable();
+            }
+        }
+
+        // Atualizar dashboard
+        function updateDashboard() {
+            const total = chamados.length;
+            const concluidos = chamados.filter(c => c.status === 'Concluído').length;
+            const abertos = chamados.filter(c => c.status === 'Aberto').length;
+            const atraso = chamados.filter(c => c.situacao === 'Em Atraso').length;
+
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-concluidos').textContent = concluidos;
+            document.getElementById('stat-abertos').textContent = abertos;
+            document.getElementById('stat-atraso').textContent = atraso;
+            document.getElementById('total-chamados').textContent = total;
+
+            // Atualizar tops
+            updateTopItems('equipamento', 'top-equipamentos');
+            updateTopDays();
+            updateTopItems('setor', 'top-setores');
+            updateTopItems('empresa', 'top-empresas');
+            updateTopItems('requisitante', 'top-requisitantes');
+            updateTopItems('canal', 'top-canais');
+        }
+
+        // Atualizar top items
+        function updateTopItems(field, elementId) {
+            const counts = {};
+            chamados.forEach(chamado => {
+                const value = chamado[field];
+                if (value) {
+                    counts[value] = (counts[value] || 0) + 1;
+                }
+            });
+
+            const sorted = Object.entries(counts)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 5);
+
+            const element = document.getElementById(elementId);
+            if (sorted.length === 0) {
+                element.innerHTML = '<div class="empty-state">Nenhum dado disponível</div>';
+                return;
+            }
+
+            element.innerHTML = sorted.map(([name, count]) => `
+                <div class="dashboard-item">
+                    <span class="name">${name}</span>
+                    <span class="count">${count}</span>
+                </div>
+            `).join('');
+        }
+
+        // Atualizar top dias
+        function updateTopDays() {
+            const counts = {};
+            const dayNames = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
+            
+            chamados.forEach(chamado => {
+                if (chamado.dataInicio) {
+                    const date = new Date(chamado.dataInicio + 'T00:00:00');
+                    const dayName = dayNames[date.getDay()];
+                    counts[dayName] = (counts[dayName] || 0) + 1;
+                }
+            });
+
+            const sorted = Object.entries(counts)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 7);
+
+            const element = document.getElementById('top-dias');
+            if (sorted.length === 0) {
+                element.innerHTML = '<div class="empty-state">Nenhum dado disponível</div>';
+                return;
+            }
+
+            element.innerHTML = sorted.map(([name, count]) => `
+                <div class="dashboard-item">
+                    <span class="name">${name.charAt(0).toUpperCase() + name.slice(1)}</span>
+                    <span class="count">${count}</span>
+                </div>
+            `).join('');
+        }
+
+        // Atualizar tabela de chamados
+        function updateChamadosTable() {
+            const tbody = document.getElementById('chamados-tbody');
+            
+            if (filteredChamados.length === 0 && chamados.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Nenhum chamado cadastrado</td></tr>';
+                return;
+            }
+            
+            const dataToShow = filteredChamados.length > 0 || document.getElementById('search-input').value ? filteredChamados : chamados;
+            
+            if (dataToShow.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Nenhum chamado encontrado</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = dataToShow.map(chamado => `
+                <tr>
+                    <td>#${chamado.numero}</td>
+                    <td>${chamado.equipamento}</td>
+                    <td>${chamado.empresa}</td>
+                    <td>${chamado.requisitante}</td>
+                    <td>
+                        <span class="badge ${chamado.status === 'Concluído' ? 'green' : 'yellow'}">
+                            ${chamado.status}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge ${chamado.prioridade === 'Alta' ? 'red' : chamado.prioridade === 'Média' ? 'yellow' : 'green'}">
+                            ${chamado.prioridade}
+                        </span>
+                    </td>
+                    <td>${chamado.dataInicio || '-'}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Filtrar chamados
+        function filterChamados() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            
+            if (!searchTerm) {
+                filteredChamados = [];
+            } else {
+                filteredChamados = chamados.filter(chamado => {
+                    return Object.values(chamado).some(value => 
+                        value && value.toString().toLowerCase().includes(searchTerm)
+                    );
+                });
+            }
+            
+            updateChamadosTable();
+        }
+
+        // Fechar modal ao clicar fora
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Inicializar dashboard
+        updateDashboard();
+    </script>
+</body>
+</html>
