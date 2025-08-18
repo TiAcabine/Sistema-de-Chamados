@@ -534,7 +534,7 @@
                     <div id="top-equipamentos"></div>
                 </div>
                 <div class="card dashboard-card">
-                    <h3>📅 Dias com mais chamados</h3>
+                    <h3>📅 Datas com mais chamados</h3>
                     <div id="top-dias"></div>
                 </div>
                 <div class="card dashboard-card">
@@ -1166,13 +1166,11 @@
         // Atualizar top dias
         function updateTopDays() {
             const counts = {};
-            const dayNames = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
             
             chamados.forEach(chamado => {
                 if (chamado.dataInicio) {
-                    const date = new Date(chamado.dataInicio + 'T00:00:00');
-                    const dayName = dayNames[date.getDay()];
-                    counts[dayName] = (counts[dayName] || 0) + 1;
+                    const dateFormatted = formatDate(chamado.dataInicio);
+                    counts[dateFormatted] = (counts[dateFormatted] || 0) + 1;
                 }
             });
 
@@ -1186,9 +1184,9 @@
                 return;
             }
 
-            element.innerHTML = sorted.map(([name, count]) => `
+            element.innerHTML = sorted.map(([date, count]) => `
                 <div class="dashboard-item">
-                    <span class="name">${name.charAt(0).toUpperCase() + name.slice(1)}</span>
+                    <span class="name">${date}</span>
                     <span class="count">${count}</span>
                 </div>
             `).join('');
