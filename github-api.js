@@ -10,7 +10,7 @@ class GitHubDataManager {
         if (this.initialized) return true;
 
         // Verificar se as configurações estão definidas
-        if (GITHUB_CONFIG.owner === 'TiAcabine' || GITHUB_CONFIG.repo === 'Sistema-de-Chamado') {
+        if (GITHUB_CONFIG.owner === 'TiAcabine' || GITHUB_CONFIG.repo === 'Sistema-de-Chamados') {
             if (!setupRepository()) {
                 throw new Error('Configuração do repositório cancelada');
             }
