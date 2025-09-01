@@ -9,13 +9,6 @@ class GitHubDataManager {
     async initialize() {
         if (this.initialized) return true;
 
-        // Verificar se as configurações estão definidas
-        if (GITHUB_CONFIG.owner === 'TiAcabine' || GITHUB_CONFIG.repo === 'Sistema-de-Chamados') {
-            if (!setupRepository()) {
-                throw new Error('Configuração do repositório cancelada');
-            }
-        }
-
         // Verificar se o token está configurado
         if (!getGitHubToken()) {
             throw new Error('Token do GitHub não configurado');
