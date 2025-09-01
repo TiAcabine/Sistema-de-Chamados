@@ -27,7 +27,7 @@ Como criar:
 5. Clique em "Generate token"
 6. Copie o token gerado
 
-Cole seu token aqui:`);
+Cole seu token aqui: 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`);
     
     if (token && token.trim()) {
         GITHUB_CONFIG.token = token.trim();
@@ -56,8 +56,8 @@ function getGitHubToken() {
 
 // Função para configurar o repositório
 function setupRepository() {
-    const owner = prompt('Digite seu nome de usuário do GitHub:', GITHUB_CONFIG.owner);
-    const repo = prompt('Digite o nome do seu repositório:', GITHUB_CONFIG.repo);
+    const owner = prompt('Digite seu nome de usuário do GitHub: TiAcabine', GITHUB_CONFIG.owner);
+    const repo = prompt('Digite o nome do seu repositório:Sistema-de-Chamados', GITHUB_CONFIG.repo);
     
     if (owner && repo) {
         GITHUB_CONFIG.owner = owner;
